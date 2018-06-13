@@ -63,3 +63,46 @@ describe('GET /users/:id', () => {
         })
     })
 })
+describe('DELETE /users/:id', () => {
+    describe('성공', () => {
+        it('204 응답', done => {
+            request(app)
+                .delete('/users/3')
+                .expect(204)
+                .end(done)
+        })
+    })
+    describe('실패', () => {
+        it('id가 숫자가 아닐 경우 400', done => {
+            request(app)
+                .delete('/users/three')
+                .expect(400)
+                .end(done)
+        })
+    })
+})
+describe('POST /users', () => {
+    describe('성공', () => {
+        it('201를 응답, 생성한 유저 객체를 응답', done => {
+            request(app)
+                .post('/users').send({name: 'Yuriko'})
+                .expect(201)
+                .end((err, res) => {
+                    res.body.should.have.property('name', 'Yuriko')
+                    done()
+                })
+        })
+    })
+    describe('실패', () => {
+        it('name이 없으면 400 응답', done => {
+            request(app)
+                .post('/users').send({})
+                .expect(400).end(done)
+        })
+        it('name이 중복이면 409 응답', done => {
+            request(app)
+                .post('/users').send({name: 'Alice'})
+                .expect(409).end(done)
+        })
+    })
+})
